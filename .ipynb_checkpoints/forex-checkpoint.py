@@ -27,14 +27,6 @@ class ArrayDataset(Dataset):
     def __getitem__(self, idx):
         return tuple(torch.from_numpy(data[idx]).float() \
                      for data in self.datasets)
-    
-class RMSELoss(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.mse = nn.MSELoss()
-        
-    def forward(self,yhat,y):
-        return torch.sqrt(self.mse(yhat,y))
 
 class FXDataModule(pl.LightningDataModule):
     def __init__(self, data_dir, batch_size, length, source_len, target_len, step):
@@ -129,19 +121,14 @@ class FXDataModule(pl.LightningDataModule):
         return self.testloader
 
 
-class FXModule(pl.LightningModule):
-    def __init__(self,input_size=1, hidden_size=100, output_size=1):
-        
-        self.hidden_size = hidden_size
-        self.lstm = nn.LSTM(input_size, hidden_size)
-        self.linear = nn.Linear(hidden_size, output_size)
-        self.hidden_cell = (torch.zeros(1,1,self.hidden_size),
-                            torch.zeros(1,1,self.hidden_size))
-
-    def forward(self, input_seq):
-        lstm_out, self.hidden_cell = self.lstm(input_seq.view(len(input_seq) ,1, -1), self.hidden_cell)
-        predictions = self.linear(lstm_out.view(len(input_seq), -1))
-        return predictions[-1]
+"""class FXModule(pl.LightningModule):
+    def __init__()
+    def forward()
+    def configure_optimizers()
+    def training_step()
+    def validation_step()
+    def return():
+        return array()"""
 
 
 if __name__ == "__main__":
@@ -179,9 +166,6 @@ if __name__ == "__main__":
     fx_dm.setup()
     cac, lon = next(iter(fx_dm.train_dataloader()))
     print(cac.shape, lon.shape)
-    
-    
-    
 
 
 
